@@ -1,0 +1,11 @@
+[Unit]
+Description=Frontend
+After=network.target
+[Service]
+User=www-data
+Group=www-data
+Type=simple
+WorkingDirectory=/var/www/relong
+ExecStart=npm run start
+[Install]
+WantedBy=multi-user.target

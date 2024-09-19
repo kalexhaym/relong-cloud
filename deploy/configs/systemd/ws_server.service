@@ -1,0 +1,10 @@
+[Unit]
+Description=WS Server
+After=network.target
+[Service]
+User=www-data
+Group=www-data
+Type=simple
+WorkingDirectory=/var/www/relong
+ExecStart=node server.js --env-file .env
+[Install]
