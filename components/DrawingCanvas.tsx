@@ -428,30 +428,32 @@ const DrawingCanvas: React.FC = () => {
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
-                        <div className="flex mb-5 relative">
-                            <Image
-                                className="preview"
-                                src={viewImage}
-                                width={width}
-                                height={height}
-                                style={{width: '100%', height: '100%'}}
-                                alt="Preview"
-                            />
-                            <>
-                                {reference && (
-                                    <Image
-                                        className="reference"
-                                        onError={() => {
-                                            setReference(false)
-                                        }}
-                                        src={`/references/${token}.jpg`}
-                                        width={width}
-                                        height={height}
-                                        style={{width: '100%', height: '100%', opacity: referenceOpacity / 100}}
-                                        alt="Reference"
-                                    />
-                                )}
-                            </>
+                        <div className="flex justify-center ">
+                            <div className="mb-5 relative" style={{width: '70dvh'}}>
+                                <Image
+                                    className="preview"
+                                    src={viewImage}
+                                    width={width}
+                                    height={height}
+                                    style={{width: '100%', height: '100%'}}
+                                    alt="Preview"
+                                />
+                                <>
+                                    {reference && (
+                                        <Image
+                                            className="reference"
+                                            onError={() => {
+                                                setReference(false)
+                                            }}
+                                            src={`/references/${token}.jpg`}
+                                            width={width}
+                                            height={height}
+                                            style={{width: '100%', height: '100%', opacity: referenceOpacity / 100}}
+                                            alt="Reference"
+                                        />
+                                    )}
+                                </>
+                            </div>
                         </div>
                         <>
                             {reference && (
