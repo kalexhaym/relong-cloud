@@ -45,12 +45,20 @@ const initConnection = (ws, token, ip) => {
     clients[token].push(ws);
 
     fs.readFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, 'utf8', (err, data) => {
-        ws.send(JSON.stringify({ type: 'loadState', data: err ? '' : data, online: clients[token].length, privateRoom: crypto.createHash('md5').update(ip + new Date().toString()).digest("hex") }));
+        wsSend(ws, {
+            type: 'loadState',
+            data: err ? '' : data,
+            online: clients[token].length,
+            privateRoom: crypto.createHash('md5').update(ip + new Date().toString()).digest("hex")
+        });
     });
 
     clients[token].forEach(client => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: 'setOnline', online: clients[token].length }));
+            wsSend(client, {
+                type: 'setOnline',
+                online: clients[token].length
+            });
         }
     });
 }
@@ -68,7 +76,11 @@ const loadState = (ws, token, m) => {
         if (err) {
             console.error(err);
         } else {
-            ws.send(JSON.stringify({ type: 'loadState', data: data, online: clients[token].length }));
+            wsSend(ws, {
+                type: 'loadState',
+                data: data,
+                online: clients[token].length
+            });
         }
     });
 }
@@ -77,7 +89,7 @@ const sendDefault = (ws, token, m) => {
     // Отправляем сообщение всем подключенным клиентам, кроме отправителя
     clients[token].forEach(client => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(m));
+            wsSend(client, m);
         }
     });
 }
@@ -92,9 +104,16 @@ const setOnline = (ws, token) => {
             }
         }
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: 'setOnline', online: online }));
+            wsSend(client, {
+                type: 'setOnline',
+                online: online
+            })
         }
     });
+}
+
+const wsSend = (ws, data) => {
+    ws.send(JSON.stringify(data));
 }
 
 console.log('WebSocket сервер запущен на порту 8080');
