@@ -42,7 +42,7 @@ body {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
-    top: 10px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -62,6 +62,21 @@ body {
       & > * {
         margin: 0 !important;
         color: #ffffff;
+      }
+    }
+
+    .color-palette {
+      justify-content: space-around;
+      flex-wrap: wrap;
+      background-color: rgba(128, 128, 128, 0.59);
+      border-radius: 15px;
+      padding: 5px;
+
+      & > button {
+        width: 35px;
+        height: 35px;
+        background-color: red;
+        border-radius: 50%;
       }
     }
   }

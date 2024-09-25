@@ -17,6 +17,7 @@ const DrawingCanvas: React.FC = () => {
     const retryTimeout = useRef<NodeJS.Timeout | null>(null);
     const [isInit, setIsInit] = useState<boolean>(false);
     const [tool, setTool] = useState<string>('pencil');
+    const [palette, setPalette] = useState<Array<string>>([]);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [startDraggingX, setStartDraggingX] = useState<number>(0);
@@ -28,10 +29,10 @@ const DrawingCanvas: React.FC = () => {
     const [range, setRange] = useState<number>(10);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
-    const zoom = useRef<number>(30);
+    const zoom = useRef<number>(25);
     const [maxZoom] = useState<number>(150);
-    const [minZoom] = useState<number>(30);
-    const [zoomPercent, setZoomPercent] = useState<number>(30);
+    const [minZoom] = useState<number>(25);
+    const [zoomPercent, setZoomPercent] = useState<number>(25);
     const [pinchDistance, setPinchDistance] = useState<number>(0);
     const [online, setOnline] = useState<number>(0);
     const [ws, setWs] = useState<WebSocket | null>(null);
@@ -109,6 +110,7 @@ const DrawingCanvas: React.FC = () => {
             if (data.type === 'loadState') {
                 loadState(data.data);
                 setOnline(data.online);
+                setPalette(data.palette || []);
                 setIsInit(true);
 
                 let privateRoom = localStorage.getItem('private-room');
@@ -439,6 +441,7 @@ const DrawingCanvas: React.FC = () => {
                     <div>
                         <Controls
                             tool={tool}
+                            palette={palette}
                             color={color}
                             range={range}
                             onColorChange={handleColorChange}

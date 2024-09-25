@@ -49,7 +49,8 @@ const initConnection = (ws, token, ip) => {
             type: 'loadState',
             data: err ? '' : data,
             online: clients[token].length,
-            privateRoom: crypto.createHash('md5').update(ip + new Date().toString()).digest("hex")
+            privateRoom: crypto.createHash('md5').update(ip + new Date().toString()).digest("hex"),
+            palette: getPalette(token)
         });
     });
 
@@ -61,6 +62,17 @@ const initConnection = (ws, token, ip) => {
             });
         }
     });
+}
+
+const getPalette = (token) => {
+    let palette = [];
+
+    try {
+        let f = fs.readFileSync(token === 'default' ? 'state.palette' : `privateStates/${token}.palette`, 'utf8');
+        palette = f.split(',');
+    } catch (e) {}
+
+    return palette;
 }
 
 const saveSate = (ws, token, m) => {

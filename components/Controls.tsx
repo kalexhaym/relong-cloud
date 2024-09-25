@@ -5,6 +5,7 @@ import { EyeDropperIcon, PencilIcon, TrashIcon, ViewfinderCircleIcon } from "@he
 
 type Props = {
     tool: string;
+    palette: Array<string>;
     color: string;
     range: number;
     onColorChange: (value:string) => void;
@@ -14,7 +15,7 @@ type Props = {
     onClear: () => void;
 };
 
-const Online: React.FC<Props> = ({tool, color, range, onColorChange, onRangeChange, onView, onEyeDropper, onClear}) => {
+const Online: React.FC<Props> = ({tool, palette, color, range, onColorChange, onRangeChange, onView, onEyeDropper, onClear}) => {
     const [clearModal, setClearModal] = useState<boolean>(false);
 
     const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,6 +83,17 @@ const Online: React.FC<Props> = ({tool, color, range, onColorChange, onRangeChan
                         <TrashIcon className="size-6"/>
                     </button>
                 </div>
+                <>
+                    {palette.length > 0 && (
+                        <div className="controls-row color-palette">
+                            {palette.map((color, i) => {
+                                return (
+                                    <button key={`color-${i}`} style={{backgroundColor: color}} onClick={() => onColorChange(color)}></button>
+                                )
+                            })}
+                        </div>
+                    )}
+                </>
             </div>
         </div>
     );
