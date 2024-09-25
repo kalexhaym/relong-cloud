@@ -356,6 +356,17 @@ const DrawingCanvas: React.FC = () => {
         setReferenceOpacity(parseInt(event.target.value));
     };
 
+    const handleReferenceOpacityWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
+        let value = event.deltaY > 0 ? referenceOpacity - 5 : referenceOpacity + 5;
+        if (value > 100) {
+            value = 100;
+        }
+        if (value < 0) {
+            value = 0;
+        }
+        setReferenceOpacity(value)
+    };
+
     const saveState = () => {
         if (context) {
             const canvas = canvasRef.current;
@@ -450,6 +461,7 @@ const DrawingCanvas: React.FC = () => {
                                             height={height}
                                             style={{width: '100%', height: '100%', opacity: referenceOpacity / 100}}
                                             alt="Reference"
+                                            onWheel={handleReferenceOpacityWheel}
                                         />
                                     )}
                                 </>
