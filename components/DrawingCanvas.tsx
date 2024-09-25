@@ -16,6 +16,7 @@ const DrawingCanvas: React.FC = () => {
     const reconnectAttempts = useRef<number>(0);
     const retryTimeout = useRef<NodeJS.Timeout | null>(null);
     const [isInit, setIsInit] = useState<boolean>(false);
+    const [tool, setTool] = useState<string>('pencil');
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [startDraggingX, setStartDraggingX] = useState<number>(0);
@@ -209,10 +210,29 @@ const DrawingCanvas: React.FC = () => {
     };
 
     const startDrawing = (event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
-        if (('touches' in event && event.touches.length === 1) || ('button' in event && event.button === 0)) {
-            setIsDrawing(true);
+        switch (tool) {
+            case 'pencil':
+                if (('touches' in event && event.touches.length === 1) || ('button' in event && event.button === 0)) {
+                    setIsDrawing(true);
+                }
+                break;
+            case 'eye-dropper':
+                if (context) {
+                    const position = 'touches' in event ? getTouchPosition(event) : { x: event.nativeEvent.offsetX / (zoom.current / 100), y: event.nativeEvent.offsetY / (zoom.current / 100) };
+                    const { x: endX, y: endY } = position;
+                    let p = context.getImageData(endX, endY, 1, 1).data;
+                    setColor("#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6));
+                    setTool('pencil');
+                }
+                break;
         }
     };
+
+    const rgbToHex = (r: number, g: number, b: number) => {
+        if (r > 255 || g > 255 || b > 255)
+            throw "Invalid color component";
+        return ((r << 16) | (g << 8) | b).toString(16);
+    }
 
     const draw = (event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
         if (!isDrawing || !context || !ws) return;
@@ -395,6 +415,10 @@ const DrawingCanvas: React.FC = () => {
         }
     }
 
+    const handleEyeDropper = () => {
+        setTool(tool === 'pencil' ? 'eye-dropper' : 'pencil');
+    }
+
     return (
         <div className="main-container">
             <Modal show={viewModal} size="7xl" onClose={() => setViewModal(false)} popup>
@@ -419,12 +443,13 @@ const DrawingCanvas: React.FC = () => {
                 {isInit ? (
                     <div>
                         <Controls
+                            tool={tool}
                             color={color}
                             range={range}
                             onColorChange={handleColorChange}
                             onRangeChange={handleRangeChange}
                             onView={handleView}
-                            onDownload={handleDownload}
+                            onEyeDropper={handleEyeDropper}
                             onClear={manuallyClearState}
                         />
                         <Online online={online} />

@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { ArrowDownTrayIcon, TrashIcon, ViewfinderCircleIcon } from "@heroicons/react/20/solid";
+import { EyeDropperIcon, PencilIcon, TrashIcon, ViewfinderCircleIcon } from "@heroicons/react/20/solid";
 
 type Props = {
+    tool: string;
     color: string;
     range: number;
     onColorChange: (value:string) => void;
     onRangeChange: (value:number) => void;
     onView: () => void;
-    onDownload: () => void;
+    onEyeDropper: () => void;
     onClear: () => void;
 };
 
-const Online: React.FC<Props> = ({color, range, onColorChange, onRangeChange, onView, onDownload, onClear}) => {
+const Online: React.FC<Props> = ({tool, color, range, onColorChange, onRangeChange, onView, onEyeDropper, onClear}) => {
     const [clearModal, setClearModal] = useState<boolean>(false);
 
     const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,13 +66,19 @@ const Online: React.FC<Props> = ({color, range, onColorChange, onRangeChange, on
                     max="50"
                 />
                 <button onClick={onView}>
-                    <ViewfinderCircleIcon className="size-6"/>
+                    <ViewfinderCircleIcon className="size-6" />
                 </button>
-                <button onClick={onDownload}>
-                    <ArrowDownTrayIcon className="size-6"/>
+                <button onClick={onEyeDropper}>
+                    <>
+                        {tool === 'pencil' ? (
+                            <PencilIcon className="size-6" />
+                        ) : (
+                            <EyeDropperIcon className="size-6" />
+                        )}
+                    </>
                 </button>
                 <button onClick={() => setClearModal(true)}>
-                    <TrashIcon className="size-6"/>
+                    <TrashIcon className="size-6" />
                 </button>
             </div>
         </div>
