@@ -52,34 +52,36 @@ const Online: React.FC<Props> = ({tool, color, range, onColorChange, onRangeChan
                 </Modal.Body>
             </Modal>
             <div className="controls">
-                <input
-                    type="color"
-                    value={color}
-                    onChange={handleColorChange}
-                    className="mb-4"
-                />
-                <input
-                    type="range"
-                    value={range}
-                    onChange={handleRangeChange}
-                    min="1"
-                    max="50"
-                />
-                <button onClick={onView}>
-                    <ViewfinderCircleIcon className="size-6" />
-                </button>
-                <button onClick={onEyeDropper}>
-                    <>
-                        {tool === 'pencil' ? (
-                            <PencilIcon className="size-6" />
-                        ) : (
-                            <EyeDropperIcon className="size-6" />
-                        )}
-                    </>
-                </button>
-                <button onClick={() => setClearModal(true)}>
-                    <TrashIcon className="size-6" />
-                </button>
+                <div className="controls-row">
+                    <input
+                        type="color"
+                        value={color}
+                        onChange={handleColorChange}
+                        className="mb-4"
+                    />
+                    <input
+                        type="range"
+                        value={range}
+                        onChange={handleRangeChange}
+                        min="1"
+                        max="50"
+                    />
+                    <button onClick={onView}>
+                        <ViewfinderCircleIcon className="size-6"/>
+                    </button>
+                    <button onClick={onEyeDropper}>
+                        <>
+                            {tool === 'pencil' ? (
+                                <PencilIcon className="size-6"/>
+                            ) : (
+                                <EyeDropperIcon className="size-6"/>
+                            )}
+                        </>
+                    </button>
+                    <button onClick={() => setClearModal(true)}>
+                        <TrashIcon className="size-6"/>
+                    </button>
+                </div>
             </div>
         </div>
     );
