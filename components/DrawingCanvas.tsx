@@ -341,16 +341,10 @@ const DrawingCanvas: React.FC = () => {
 
     const handleColorChange = (value:string) => {
         setColor(value);
-        if (context) {
-            context.strokeStyle = value;
-        }
     };
 
     const handleRangeChange = (value:number) => {
         setRange(value);
-        if (context) {
-            context.lineWidth = value;
-        }
     };
 
     const saveState = () => {
