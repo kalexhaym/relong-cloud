@@ -453,14 +453,18 @@ const DrawingCanvas: React.FC = () => {
                                 )}
                             </>
                         </div>
-                        <input
-                            className="mb-5"
-                            type="range"
-                            value={referenceOpacity}
-                            onChange={handleReferenceOpacity}
-                            min="0"
-                            max="100"
-                        />
+                        <>
+                            {reference && (
+                                <input
+                                    className="mb-5"
+                                    type="range"
+                                    value={referenceOpacity}
+                                    onChange={handleReferenceOpacity}
+                                    min="0"
+                                    max="100"
+                                />
+                            )}
+                        </>
                         <div className="flex justify-center gap-4">
                             <Button color="gray" onClick={handleDownload}>
                                 <ArrowDownTrayIcon className="size-6"/>
