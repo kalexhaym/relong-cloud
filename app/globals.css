@@ -33,6 +33,13 @@ body {
   overflow: hidden;
 }
 
+.reference {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
 .main-container {
   width: 100dvw;
   height: 100dvh;

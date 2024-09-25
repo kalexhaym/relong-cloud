@@ -27,6 +27,8 @@ const DrawingCanvas: React.FC = () => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
     const [color, setColor] = useState<string>('#ffffff');
     const [range, setRange] = useState<number>(10);
+    const [reference, setReference] = useState<boolean>(true);
+    const [referenceOpacity, setReferenceOpacity] = useState<number>(0);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
     const zoom = useRef<number>(25);
@@ -350,6 +352,10 @@ const DrawingCanvas: React.FC = () => {
         setRange(value);
     };
 
+    const handleReferenceOpacity = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setReferenceOpacity(parseInt(event.target.value));
+    };
+
     const saveState = () => {
         if (context) {
             const canvas = canvasRef.current;
@@ -422,9 +428,39 @@ const DrawingCanvas: React.FC = () => {
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
-                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                            <Image src={viewImage} width={width} height={height} style={{ width: '100%', height: '100%' }} alt="Canvas"/>
-                        </h3>
+                        <div className="flex mb-5 relative">
+                            <Image
+                                className="preview"
+                                src={viewImage}
+                                width={width}
+                                height={height}
+                                style={{width: '100%', height: '100%'}}
+                                alt="Preview"
+                            />
+                            <>
+                                {reference && (
+                                    <Image
+                                        className="reference"
+                                        onError={() => {
+                                            setReference(false)
+                                        }}
+                                        src={`/references/${token}.jpg`}
+                                        width={width}
+                                        height={height}
+                                        style={{width: '100%', height: '100%', opacity: referenceOpacity / 100}}
+                                        alt="Reference"
+                                    />
+                                )}
+                            </>
+                        </div>
+                        <input
+                            className="mb-5"
+                            type="range"
+                            value={referenceOpacity}
+                            onChange={handleReferenceOpacity}
+                            min="0"
+                            max="100"
+                        />
                         <div className="flex justify-center gap-4">
                             <Button color="gray" onClick={handleDownload}>
                                 <ArrowDownTrayIcon className="size-6"/>
