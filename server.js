@@ -15,6 +15,30 @@ wss.on('connection', (ws, req) => {
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
+    initConnection(ws, token, ip);
+
+    ws.on('message', (message) => {
+        const m = JSON.parse(message);
+        switch (m.type) {
+            case 'saveState':
+                saveSate(ws, token, m);
+                break;
+            case 'loadState':
+                loadState(ws, token, m);
+                break;
+            default:
+                sendDefault(ws, token, m);
+                break;
+        }
+    });
+
+    ws.on('close', () => {
+        setOnline(ws, token);
+        console.log('Client disconnected');
+    });
+});
+
+const initConnection = (ws, token, ip) => {
     if (!clients[token]) {
         clients[token] = [];
     }
@@ -29,50 +53,48 @@ wss.on('connection', (ws, req) => {
             client.send(JSON.stringify({ type: 'setOnline', online: clients[token].length }));
         }
     });
+}
 
-    ws.on('message', (message) => {
-        const m = JSON.parse(message);
-
-        if (m.type === 'saveState') {
-            fs.writeFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, m.data, err => {
-                if (err) {
-                    console.error(err);
-                }
-            });
-        } else if (m.type === 'loadState') {
-            fs.readFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, 'utf8', (err, data) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    ws.send(JSON.stringify({ type: 'loadState', data: data, online: clients[token].length }));
-                }
-            });
-        } else {
-            // Отправляем сообщение всем подключенным клиентам, кроме отправителя
-            clients[token].forEach(client => {
-                if (client !== ws && client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(m));
-                }
-            });
+const saveSate = (ws, token, m) => {
+    fs.writeFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, m.data, err => {
+        if (err) {
+            console.error(err);
         }
     });
+}
 
-    ws.on('close', () => {
-        const online = clients[token].length - 1;
-        clients[token].forEach((client, index) => {
-            if (client === ws) {
-                clients[token].splice(index, 1);
-                if (clients[token].length === 0) {
-                    delete clients[token];
-                }
-            }
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ type: 'setOnline', online: online }));
-            }
-        });
-
-        console.log('Client disconnected');
+const loadState = (ws, token, m) => {
+    fs.readFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            ws.send(JSON.stringify({ type: 'loadState', data: data, online: clients[token].length }));
+        }
     });
-});
+}
+
+const sendDefault = (ws, token, m) => {
+    // Отправляем сообщение всем подключенным клиентам, кроме отправителя
+    clients[token].forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(m));
+        }
+    });
+}
+
+const setOnline = (ws, token) => {
+    const online = clients[token].length - 1;
+    clients[token].forEach((client, index) => {
+        if (client === ws) {
+            clients[token].splice(index, 1);
+            if (clients[token].length === 0) {
+                delete clients[token];
+            }
+        }
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ type: 'setOnline', online: online }));
+        }
+    });
+}
 
 console.log('WebSocket сервер запущен на порту 8080');
