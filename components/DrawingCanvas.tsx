@@ -424,7 +424,7 @@ const DrawingCanvas: React.FC = () => {
 
     return (
         <div className="main-container">
-            <Modal show={viewModal} size="7xl" onClose={() => setViewModal(false)} popup>
+            <Modal dismissible show={viewModal} size="7xl" onClose={() => setViewModal(false)} popup>
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">

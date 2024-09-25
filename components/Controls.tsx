@@ -33,7 +33,7 @@ const Online: React.FC<Props> = ({tool, palette, color, range, onColorChange, on
 
     return (
         <div>
-            <Modal show={clearModal} size="md" onClose={() => setClearModal(false)} popup>
+            <Modal dismissible show={clearModal} size="md" onClose={() => setClearModal(false)} popup>
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
