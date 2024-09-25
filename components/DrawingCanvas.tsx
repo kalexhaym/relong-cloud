@@ -218,9 +218,8 @@ const DrawingCanvas: React.FC = () => {
                 break;
             case 'eye-dropper':
                 if (context) {
-                    const position = 'touches' in event ? getTouchPosition(event) : { x: event.nativeEvent.offsetX / (zoom.current / 100), y: event.nativeEvent.offsetY / (zoom.current / 100) };
-                    const { x: endX, y: endY } = position;
-                    let p = context.getImageData(endX, endY, 1, 1).data;
+                    const position = getPosition(event);
+                    let p = context.getImageData(position.x, position.y, 1, 1).data;
                     setColor("#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6));
                     setTool('pencil');
                 }
@@ -237,13 +236,11 @@ const DrawingCanvas: React.FC = () => {
     const draw = (event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
         if (!isDrawing || !context || !ws) return;
 
-        const position = 'touches' in event ? getTouchPosition(event) : { x: event.nativeEvent.offsetX / (zoom.current / 100), y: event.nativeEvent.offsetY / (zoom.current / 100) };
+        const position = getPosition(event);
 
-        const { x: endX, y: endY } = position;
+        ws.send(JSON.stringify({ type: 'draw', x: position.x, y: position.y, color, range }));
 
-        ws.send(JSON.stringify({ type: 'draw', endX, endY, color, range }));
-
-        drawCircle(endX, endY, color, range);
+        drawCircle(position.x, position.y, color, range);
     };
 
     const drawCircle = (centerX: number, centerY: number, color: string, radius: number) => {
@@ -268,7 +265,11 @@ const DrawingCanvas: React.FC = () => {
         saveState();
     };
 
-    const getTouchPosition = (event: TouchEvent<HTMLCanvasElement>) => {
+    const getPosition = (event: MouseEvent<HTMLElement> | TouchEvent<HTMLElement>) => {
+        return 'touches' in event ? getTouchPosition(event) : { x: event.nativeEvent.offsetX / (zoom.current / 100), y: event.nativeEvent.offsetY / (zoom.current / 100) };
+    }
+
+    const getTouchPosition = (event: TouchEvent<HTMLElement>) => {
         const touch = event.touches[0];
         const rect = canvasRef.current?.getBoundingClientRect();
         return {
