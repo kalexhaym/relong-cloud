@@ -111,7 +111,7 @@ const DrawingCanvas: React.FC = () => {
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'draw') {
-                drawCircle(data.endX, data.endY, data.color, data.range);
+                drawCircle(data.x, data.y, data.color, data.range);
             }
             if (data.type === 'clear') {
                 clearState(false);
