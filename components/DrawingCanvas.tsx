@@ -28,7 +28,7 @@ const DrawingCanvas: React.FC = () => {
     const [color, setColor] = useState<string>('#ffffff');
     const [range, setRange] = useState<number>(10);
     const [reference, setReference] = useState<boolean>(true);
-    const [referenceOpacity, setReferenceOpacity] = useState<number>(60);
+    const [referenceOpacity, setReferenceOpacity] = useState<number>(70);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
     const zoom = useRef<number>(25);
@@ -52,6 +52,15 @@ const DrawingCanvas: React.FC = () => {
 
         const r = localStorage.getItem('range');
         setRange(r ? parseInt(r) : 10);
+
+        let img = new window.Image();
+        img.onerror = img.onabort = function() {
+            setReference(false);
+        };
+        img.onload = function() {
+            setReference(true);
+        };
+        img.src = `/references/${token}.jpg`;
 
         return () => {
             if (retryTimeout.current) {
