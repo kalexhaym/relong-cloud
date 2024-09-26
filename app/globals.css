@@ -74,6 +74,7 @@ body {
       -webkit-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
       -moz-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
       box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+      max-width: 340px;
 
       & > input {
         cursor: pointer;
@@ -114,6 +115,38 @@ body {
         border-radius: 50%;
         cursor: pointer;
         border: solid 2px;
+      }
+    }
+  }
+
+  .reference-small {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    background-color: rgb(128, 128, 128);
+    border-radius: 15px;
+    padding: 10px;
+    -webkit-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+    -moz-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+    box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+
+    img {
+      width: 300px;
+      height: 300px;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 1025px) {
+    .reference-small {
+      top: unset;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      img {
+        width: calc(100dvw - 40px);
+        height: unset;
       }
     }
   }
@@ -177,8 +210,8 @@ body {
     align-items: center;
     width: 40px;
     height: 40px;
-    bottom: 10px;
-    right: 70px;
+    bottom: 70px;
+    right: 10px;
     padding: 5px;
     border-radius: 50%;
     background-color: #d84c57;

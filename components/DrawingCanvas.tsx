@@ -5,7 +5,7 @@ import Online from "@/components/Online";
 import Controls from "@/components/Controls";
 import { Button, Modal, Spinner } from "flowbite-react";
 import Image from "next/image";
-import { ArrowDownTrayIcon, QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
+import { ArrowDownTrayIcon, PhotoIcon, QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { useSearchParams } from 'next/navigation'
 import Bell from "@/components/Bell";
 import { toast } from "sonner";
@@ -28,6 +28,7 @@ const DrawingCanvas: React.FC = () => {
     const [color, setColor] = useState<string>('#ffffff');
     const [range, setRange] = useState<number>(10);
     const [reference, setReference] = useState<boolean>(false);
+    const [referenceShow, setReferenceShow] = useState<boolean>(false);
     const [referenceOpacity, setReferenceOpacity] = useState<number>(70);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
@@ -513,6 +514,29 @@ const DrawingCanvas: React.FC = () => {
                             onEyeDropper={handleEyeDropper}
                             onClear={manuallyClearState}
                         />
+                        <>
+                            {reference && (
+                                <div className="reference-small" onClick={() => {setReferenceShow(!referenceShow)}}>
+                                    <>
+                                        {
+                                            referenceShow ? (
+                                                <Image
+                                                    onError={() => {
+                                                        setReference(false)
+                                                    }}
+                                                    src={`/references/${token}.jpg`}
+                                                    width={300}
+                                                    height={300}
+                                                    alt="Reference"
+                                                />
+                                            ) : (
+                                                <PhotoIcon className="size-6"/>
+                                            )
+                                        }
+                                    </>
+                                </div>
+                            )}
+                        </>
                         <Online online={online} />
                         <Bell topic={token}/>
                     </div>
