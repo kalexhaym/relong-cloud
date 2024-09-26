@@ -27,7 +27,7 @@ const DrawingCanvas: React.FC = () => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
     const [color, setColor] = useState<string>('#ffffff');
     const [range, setRange] = useState<number>(10);
-    const [reference, setReference] = useState<boolean>(true);
+    const [reference, setReference] = useState<boolean>(false);
     const [referenceOpacity, setReferenceOpacity] = useState<number>(70);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
