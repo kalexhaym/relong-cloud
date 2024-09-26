@@ -1,11 +1,11 @@
-sudo systemctl stop nginx.service
+sudo systemctl stop nginx.service;
 sudo systemctl stop ws_server.service;
 sudo systemctl stop frontend.service;
-cd /var/www/relong
+cd /var/www/relong;
 git pull origin main;
 npm i;
 npm run build;
 sudo systemctl start ws_server.service;
 sudo systemctl start nginx.service;
 sudo systemctl start frontend.service;
-sudo chmod 777 -R /var/www/relong/privateStates
+sudo chmod 777 -R /var/www/relong/privateStates;
