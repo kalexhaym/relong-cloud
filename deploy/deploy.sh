@@ -8,3 +8,4 @@ npm run build;
 sudo systemctl start ws_server.service;
 sudo systemctl start nginx.service;
 sudo systemctl start frontend.service;
+sudo chmod 777 -R /var/www/relong/privateStates
