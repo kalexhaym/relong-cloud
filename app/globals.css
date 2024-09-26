@@ -40,6 +40,14 @@ body {
   opacity: 0;
 }
 
+.modal > div[role=dialog] > div:first-child {
+  background-color: rgb(108, 108, 108);
+  border-radius: 15px;
+  -webkit-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+}
+
 .main-container {
   width: 100dvw;
   height: 100dvh;
@@ -60,9 +68,12 @@ body {
       align-items: center;
       justify-content: space-around;
       gap: 20px;
-      background-color: rgba(128, 128, 128, .9);
+      background-color: rgb(128, 128, 128);
       border-radius: 15px;
-      padding: 5px;
+      padding: 10px;
+      -webkit-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+      -moz-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+      box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
 
       & > input {
         cursor: pointer;

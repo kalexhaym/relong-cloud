@@ -28,7 +28,7 @@ const DrawingCanvas: React.FC = () => {
     const [color, setColor] = useState<string>('#ffffff');
     const [range, setRange] = useState<number>(10);
     const [reference, setReference] = useState<boolean>(true);
-    const [referenceOpacity, setReferenceOpacity] = useState<number>(0);
+    const [referenceOpacity, setReferenceOpacity] = useState<number>(60);
     const [width] = useState<number>(3000);
     const [height] = useState<number>(3000);
     const zoom = useRef<number>(25);
@@ -435,7 +435,7 @@ const DrawingCanvas: React.FC = () => {
 
     return (
         <div className="main-container">
-            <Modal dismissible show={viewModal} size="7xl" onClose={() => setViewModal(false)} popup>
+            <Modal className="modal" dismissible show={viewModal} size="7xl" onClose={() => setViewModal(false)} popup>
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
