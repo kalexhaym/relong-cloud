@@ -43,9 +43,9 @@ body {
 .modal > div[role=dialog] > div:first-child {
   background-color: rgb(108, 108, 108);
   border-radius: 15px;
-  -webkit-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
-  box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+  -moz-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+  box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
 }
 
 .main-container {
@@ -71,9 +71,9 @@ body {
       background-color: rgb(128, 128, 128);
       border-radius: 15px;
       padding: 10px;
-      -webkit-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
-      -moz-box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
-      box-shadow: 10px 10px 30px -1px rgba(0,0,0,0.75);
+      -webkit-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+      -moz-box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
+      box-shadow: 5px 5px 15px -1px rgba(0,0,0,0.6);
 
       & > input {
         cursor: pointer;
@@ -83,6 +83,7 @@ body {
         height: 35px;
         border-radius: 50%;
         overflow: hidden;
+        border: solid 2px;
       }
       input[type=color]::-webkit-color-swatch {
         border: none;
@@ -112,6 +113,7 @@ body {
         background-color: red;
         border-radius: 50%;
         cursor: pointer;
+        border: solid 2px;
       }
     }
   }
