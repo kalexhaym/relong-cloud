@@ -15,7 +15,7 @@ type Props = {
     onClear: () => void;
 };
 
-const Online: React.FC<Props> = ({tool, palette, color, range, onColorChange, onRangeChange, onView, onEyeDropper, onClear}) => {
+const Controls: React.FC<Props> = ({tool, palette, color, range, onColorChange, onRangeChange, onView, onEyeDropper, onClear}) => {
     const [clearModal, setClearModal] = useState<boolean>(false);
 
     const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,4 +99,4 @@ const Online: React.FC<Props> = ({tool, palette, color, range, onColorChange, on
     );
 }
 
-export default Online;
+export default Controls;
