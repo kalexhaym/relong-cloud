@@ -16,6 +16,7 @@ const DrawingCanvas: React.FC = () => {
     const reconnectAttempts = useRef<number>(0);
     const retryTimeout = useRef<NodeJS.Timeout | null>(null);
     const [isInit, setIsInit] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [tool, setTool] = useState<string>('pencil');
     const [palette, setPalette] = useState<Array<string>>([]);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
@@ -114,6 +115,7 @@ const DrawingCanvas: React.FC = () => {
                 loadState(data.data);
                 setOnline(data.online);
                 setPalette(data.palette || []);
+                setIsLoading(false);
                 setIsInit(true);
 
                 let privateRoom = localStorage.getItem('private-room');
@@ -143,6 +145,7 @@ const DrawingCanvas: React.FC = () => {
             if (data.type === 'loadState') {
                 loadState(data.data);
                 setOnline(data.online);
+                setIsLoading(false);
             }
             if (data.type === 'draw') {
                 drawCircle(data.x, data.y, data.color, data.range);
@@ -410,6 +413,7 @@ const DrawingCanvas: React.FC = () => {
 
     const clearState = () => {
         if (ws) {
+            setIsLoading(true);
             ws.send(JSON.stringify({ type: 'clearState' }));
         }
     }
@@ -494,7 +498,7 @@ const DrawingCanvas: React.FC = () => {
                 </Modal.Body>
             </Modal>
             <>
-                {isInit ? (
+                {isInit && !isLoading ? (
                     <div>
                         <Controls
                             tool={tool}
