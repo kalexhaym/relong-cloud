@@ -110,16 +110,7 @@ const DrawingCanvas: React.FC = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.type === 'draw') {
-                drawCircle(data.x, data.y, data.color, data.range);
-            }
-            if (data.type === 'clear') {
-                clearState(false);
-            }
-            if (data.type === 'save') {
-                saveState();
-            }
-            if (data.type === 'loadState') {
+            if (data.type === 'initState') {
                 loadState(data.data);
                 setOnline(data.online);
                 setPalette(data.palette || []);
@@ -148,6 +139,16 @@ const DrawingCanvas: React.FC = () => {
                         }
                     );
                 }
+            }
+            if (data.type === 'loadState') {
+                loadState(data.data);
+                setOnline(data.online);
+            }
+            if (data.type === 'draw') {
+                drawCircle(data.x, data.y, data.color, data.range);
+            }
+            if (data.type === 'save') {
+                saveState();
             }
             if (data.type === 'setOnline') {
                 setOnline(data.online);
@@ -393,8 +394,12 @@ const DrawingCanvas: React.FC = () => {
     const loadState = (data:string) => {
         if (context) {
             let img = new window.Image;
-            if (data != null) {
+            if (data != null && data != '') {
                 img.src = data;
+            } else {
+                context.reset();
+                context.rect(0, 0, width, height);
+                context.fill();
             }
             img.onload = function () {
                 context.reset();
@@ -403,22 +408,10 @@ const DrawingCanvas: React.FC = () => {
         }
     }
 
-    const clearState = (sync:boolean) => {
-        if (sync && ws) {
-            ws.send(JSON.stringify({ type: 'clear' }));
+    const clearState = () => {
+        if (ws) {
+            ws.send(JSON.stringify({ type: 'clearState' }));
         }
-        if (context) {
-            context.reset();
-            context.rect(0, 0, width, height);
-            context.fill();
-            if (sync) {
-                saveState();
-            }
-        }
-    }
-
-    const manuallyClearState = () => {
-        clearState(true);
     }
 
     const handleDownload = () => {
@@ -512,7 +505,7 @@ const DrawingCanvas: React.FC = () => {
                             onRangeChange={handleRangeChange}
                             onView={handleView}
                             onEyeDropper={handleEyeDropper}
-                            onClear={manuallyClearState}
+                            onClear={clearState}
                         />
                         <>
                             {reference && (

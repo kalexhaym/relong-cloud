@@ -26,6 +26,9 @@ wss.on('connection', (ws, req) => {
             case 'loadState':
                 loadState(ws, token, m);
                 break;
+            case 'clearState':
+                clearState(ws, token, m);
+                break;
             default:
                 sendDefault(ws, token, m);
                 break;
@@ -46,7 +49,7 @@ const initConnection = (ws, token, ip) => {
 
     fs.readFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, 'utf8', (err, data) => {
         wsSend(ws, {
-            type: 'loadState',
+            type: 'initState',
             data: err ? '' : data,
             online: clients[token].length,
             privateRoom: crypto.createHash('md5').update(ip + new Date().toString()).digest("hex"),
@@ -94,6 +97,40 @@ const loadState = (ws, token, m) => {
                 online: clients[token].length
             });
         }
+    });
+}
+
+const clearState = (ws, token, m) => {
+    fs.readFile(`exampleStates/${token}.txt`, 'utf8', (err, data) => {
+        let state;
+
+        if (!err) {
+            state = data;
+
+            fs.writeFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, state, err => {
+                if (err) {
+                    console.error(err);
+                }
+            });
+        } else {
+            state = '';
+
+            fs.writeFile(token === 'default' ? 'state.txt' : `privateStates/${token}.txt`, state, err => {
+                if (err) {
+                    console.error(err);
+                }
+            });
+        }
+
+        clients[token].forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                wsSend(client, {
+                    type: 'loadState',
+                    data: state,
+                    online: clients[token].length
+                });
+            }
+        });
     });
 }
 
