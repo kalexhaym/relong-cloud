@@ -1,6 +1,6 @@
 {
   "name": "relong",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -19,7 +19,7 @@
     "firebase-admin": "^12.5.0",
     "flowbite-react": "^0.10.1",
     "lucide-react": "^0.441.0",
-    "next": "14.2.7",
+    "next": "14.2.10",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
