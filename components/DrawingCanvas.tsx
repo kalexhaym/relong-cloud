@@ -498,7 +498,7 @@ const DrawingCanvas: React.FC = () => {
                 </Modal.Body>
             </Modal>
             <>
-                {isInit && !isLoading ? (
+                {isInit && (
                     <div>
                         <Controls
                             tool={tool}
@@ -537,9 +537,12 @@ const DrawingCanvas: React.FC = () => {
                         <Online online={online} />
                         <Bell topic={token}/>
                     </div>
-                ) : (
+                )}
+            </>
+            <>
+                {isLoading && (
                     <div className="absolute flex justify-center items-center w-dvw h-dvh">
-                        <Spinner aria-label="Loading..." size="xl" />
+                        <Spinner aria-label="Loading..." size="xl"/>
                     </div>
                 )}
             </>
