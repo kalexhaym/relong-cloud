@@ -67,6 +67,8 @@ const DrawingCanvas: React.FC = () => {
         return () => {
             if (retryTimeout.current) {
                 clearTimeout(retryTimeout.current);
+                retryTimeout.current = null;
+                reconnectAttempts.current = 0;
             }
             if (ws) {
                 ws.close();
@@ -104,8 +106,17 @@ const DrawingCanvas: React.FC = () => {
     const connectWebSocket = () => {
         const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL, token);
 
-        socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
+        socket.onopen = () => {
+            if (retryTimeout.current) {
+                clearTimeout(retryTimeout.current);
+                retryTimeout.current = null;
+            }
+            reconnectAttempts.current = 0;
+        };
+
+        socket.onclose = () => {
+            setIsInit(false);
+            setIsLoading(true);
             attemptReconnect();
         };
 
