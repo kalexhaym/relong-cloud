@@ -9,7 +9,7 @@
     "predeploy": "npm run build:pages",
     "deploy": "gh-pages -d build",
     "build": "next build",
-    "build:pages": "env-cmd -f .env.pages next build ",
+    "build:pages": "env-cmd -f .env.pages next build",
     "start": "next start",
     "lint": "next lint",
     "production": "next start -p 8080"
