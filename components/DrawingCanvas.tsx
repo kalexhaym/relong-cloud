@@ -39,6 +39,7 @@ const DrawingCanvas: React.FC = () => {
     const [zoomPercent, setZoomPercent] = useState<number>(25);
     const [pinchDistance, setPinchDistance] = useState<number>(0);
     const [online, setOnline] = useState<number>(0);
+    const [wsConfigured, setWsConfigured] = useState<boolean>(false);
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [viewModal, setViewModal] = useState<boolean>(false);
     const [viewImage, setViewImage] = useState<string>('');
@@ -104,72 +105,86 @@ const DrawingCanvas: React.FC = () => {
     }, [context]);
 
     const connectWebSocket = () => {
-        const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL, token);
-
-        socket.onopen = () => {
-            if (retryTimeout.current) {
-                clearTimeout(retryTimeout.current);
-                retryTimeout.current = null;
+        if (!process.env.NEXT_PUBLIC_WS_URL || process.env.NEXT_PUBLIC_WS_URL === 'null') {
+            setWsConfigured(false);
+            const state = localStorage.getItem('state');
+            if (state) {
+                loadState(state);
             }
-            reconnectAttempts.current = 0;
-        };
+            setOnline(1);
+            setPalette([]);
+            setIsLoading(false);
+            setIsInit(true);
+            console.log('WebSocket not configured, app running in no WebSocket mode.');
+        } else {
+            const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL, token);
 
-        socket.onclose = () => {
-            setIsInit(false);
-            setIsLoading(true);
-            attemptReconnect();
-        };
-
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.type === 'initState') {
-                loadState(data.data);
-                setOnline(data.online);
-                setPalette(data.palette || []);
-                setIsLoading(false);
-                setIsInit(true);
-
-                let privateRoom = localStorage.getItem('private-room');
-
-                if (!privateRoom && data.privateRoom) {
-                    localStorage.setItem('private-room', data.privateRoom);
-                    privateRoom = data.privateRoom;
+            socket.onopen = () => {
+                if (retryTimeout.current) {
+                    clearTimeout(retryTimeout.current);
+                    retryTimeout.current = null;
                 }
+                reconnectAttempts.current = 0;
+            };
 
-                if (privateRoom && token === 'default') {
-                    toast.info(
-                        `Want to start drawing in a private room?`,
-                        {
-                            icon: <QuestionMarkCircleIcon />,
-                            duration: 20000,
-                            position: 'bottom-center',
-                            action: {
-                                label: "Yes",
-                                onClick: () => {
-                                    window.location.href = `/?token=${privateRoom}`;
+            socket.onclose = () => {
+                setIsInit(false);
+                setIsLoading(true);
+                attemptReconnect();
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'initState') {
+                    loadState(data.data);
+                    setOnline(data.online);
+                    setPalette(data.palette || []);
+                    setIsLoading(false);
+                    setIsInit(true);
+
+                    let privateRoom = localStorage.getItem('private-room');
+
+                    if (!privateRoom && data.privateRoom) {
+                        localStorage.setItem('private-room', data.privateRoom);
+                        privateRoom = data.privateRoom;
+                    }
+
+                    if (privateRoom && token === 'default') {
+                        toast.info(
+                            `Want to start drawing in a private room?`,
+                            {
+                                icon: <QuestionMarkCircleIcon />,
+                                duration: 20000,
+                                position: 'bottom-center',
+                                action: {
+                                    label: "Yes",
+                                    onClick: () => {
+                                        window.location.href = `/?token=${privateRoom}`;
+                                    },
                                 },
-                            },
-                        }
-                    );
+                            }
+                        );
+                    }
                 }
-            }
-            if (data.type === 'loadState') {
-                loadState(data.data);
-                setOnline(data.online);
-                setIsLoading(false);
-            }
-            if (data.type === 'draw') {
-                drawCircle(data.x, data.y, data.color, data.range);
-            }
-            if (data.type === 'save') {
-                saveState();
-            }
-            if (data.type === 'setOnline') {
-                setOnline(data.online);
-            }
-        };
+                if (data.type === 'loadState') {
+                    loadState(data.data);
+                    setOnline(data.online);
+                    setIsLoading(false);
+                }
+                if (data.type === 'draw') {
+                    drawCircle(data.x, data.y, data.color, data.range);
+                }
+                if (data.type === 'save') {
+                    saveState();
+                }
+                if (data.type === 'setOnline') {
+                    setOnline(data.online);
+                }
+            };
 
-        setWs(socket);
+            setWs(socket);
+            setWsConfigured(true);
+        }
     };
 
     const attemptReconnect = () => {
@@ -263,11 +278,13 @@ const DrawingCanvas: React.FC = () => {
     }
 
     const draw = (event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
-        if (!isDrawing || !context || !ws) return;
+        if (!isDrawing || !context || (wsConfigured && !ws)) return;
 
         const position = getPosition(event);
 
-        ws.send(JSON.stringify({ type: 'draw', x: position.x, y: position.y, color, range }));
+        if (ws) {
+            ws.send(JSON.stringify({ type: 'draw', x: position.x, y: position.y, color, range }));
+        }
 
         drawCircle(position.x, position.y, color, range);
     };
@@ -282,7 +299,7 @@ const DrawingCanvas: React.FC = () => {
     };
 
     const stopDrawing = (event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
-        if (!isDrawing || !context || !ws) return;
+        if (!isDrawing || !context || (wsConfigured && !ws)) return;
 
         if ('clientX' in event || 'clientY' in event) {
             draw(event);
@@ -398,8 +415,10 @@ const DrawingCanvas: React.FC = () => {
             if (canvas) {
                 const data = canvas.toDataURL();
 
-                if (ws) {
+                if (wsConfigured && ws) {
                     ws.send(JSON.stringify({ type: 'saveState', data: data }));
+                } else {
+                    localStorage.setItem('state', data);
                 }
             }
         }
@@ -423,9 +442,16 @@ const DrawingCanvas: React.FC = () => {
     }
 
     const clearState = () => {
-        if (ws) {
+        if (wsConfigured && ws) {
             setIsLoading(true);
             ws.send(JSON.stringify({ type: 'clearState' }));
+        } else {
+            localStorage.removeItem('state');
+            if (context) {
+                context.reset();
+                context.rect(0, 0, width, height);
+                context.fill();
+            }
         }
     }
 
@@ -545,8 +571,14 @@ const DrawingCanvas: React.FC = () => {
                                 </div>
                             )}
                         </>
-                        <Online online={online} />
-                        <Bell topic={token}/>
+                        <>
+                            {wsConfigured && (
+                                <div>
+                                    <Online online={online} />
+                                    <Bell topic={token}/>
+                                </div>
+                            )}
+                        </>
                     </div>
                 )}
             </>
