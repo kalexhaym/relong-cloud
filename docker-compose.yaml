@@ -1,0 +1,16 @@
+services:
+  relong:
+    container_name: relong-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  websocket:
+    build:
+      context: ./websocket
+      dockerfile: Dockerfile
+    container_name: relong-websocket
+    ports:
+      - "8080:8080"

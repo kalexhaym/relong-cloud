@@ -2,7 +2,6 @@ const WebSocket = require('ws');
 const fs = require('node:fs');
 const crypto = require('crypto')
 
-// Создаем WebSocket-сервер на порту 8080
 const wss = new WebSocket.Server({ port: process.env.SERVER_PORT || 8080, host: process.env.SERVER_HOST || '127.0.0.1' });
 
 let clients = []
@@ -165,4 +164,4 @@ const wsSend = (ws, data) => {
     ws.send(JSON.stringify(data));
 }
 
-console.log('WebSocket сервер запущен на порту 8080');
+console.log(`WebSocket server is running on port ${process.env.SERVER_PORT || 8080}`);

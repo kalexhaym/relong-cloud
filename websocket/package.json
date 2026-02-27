@@ -1,0 +1,12 @@
+{
+  "name": "relong-websocket",
+  "homepage": "https://kalexhaym.github.io/relong-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "server": "node --env-file .env server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

@@ -5,6 +5,6 @@ After=network.target
 User=www-data
 Group=www-data
 Type=simple
-WorkingDirectory=/var/www/relong
+WorkingDirectory=/var/www/relong/websocket
 ExecStart=node server.js --env-file .env
 [Install]
